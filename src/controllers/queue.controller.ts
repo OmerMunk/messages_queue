@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 import { addMessageToQueue, getMessageFromQueue } from "../service/queue.service";
 
-export const addMessageController = async (req: Request, res: Response): Promise<void> => {
+export const addMessageController = async (req: Request, res: Response, next:NextFunction): Promise<void> => {
     try {
         const queueName: string = req.params.queue_name
         const message = req.body;
@@ -14,16 +14,13 @@ export const addMessageController = async (req: Request, res: Response): Promise
         }
     } catch (error: any) {
         console.error(`[addMessageController] Error: ${error.message}`, error.stack)
-        // todo: later on: add a general express error middleware
         console.error(`[addMessageController] Error: ${error.message}`, error.stack)
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error'
-        })
+        next(error)
+
     }
 }
 
-export const getMessageController = async (req: Request, res: Response): Promise<void> => {
+export const getMessageController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const queueName: string = req.params.queue_name
         const timeout: number = parseInt(req.query.timeout as string, 10) || 1000 //todo: convert to default variavble
@@ -43,9 +40,7 @@ export const getMessageController = async (req: Request, res: Response): Promise
         console.error(`[getMessageController] Error: ${error.message}`, error.stack)
         // todo: later on: add a general express error middleware
         console.error(`[addMessageController] Error: ${error.message}`, error.stack)
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error'
-        })
+        next(error)
+
     }
 }

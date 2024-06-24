@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import helmet from 'helmet'
 import cors from 'cors'
 import {indexRouter} from "./routes/index.router";
+import errorHandlerMiddleware from './middlewares/errors.middleware'
+
 
 
 const app: Application = express();
@@ -17,6 +19,8 @@ app.use(cors())
 
 
 app.use('/', indexRouter)
+
+app.use(errorHandlerMiddleware)
 
 
 

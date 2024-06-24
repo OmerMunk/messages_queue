@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Request, Response, NextFunction } from "express";
+import {ApiError} from "../../errors/api.error";
 
 /**
  * @name messageSchema
@@ -23,10 +24,7 @@ export const validateAddMessage = async (req: Request, res: Response, next: Next
         messageSchema.parse(req.body);
         next();
     } catch (error: any) {
-        res.status(400).json({
-            success: false,
-            message: error.errors
-        });
+        next(new ApiError(400, JSON.stringify(error.errors)));
     }
 }
 
