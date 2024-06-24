@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+// import { EventEmitter } from 'events';
 
 interface Message {
     id: number;
@@ -7,29 +7,21 @@ interface Message {
 
 class Queue {
     private messages: Message[] = [];
-    private emitter = new EventEmitter();
     private nextId = 1;
     public name;
-    private isTest: boolean;
+    private waiting: { resolve: Function, timer: NodeJS.Timeout }[] = []
 
     constructor(name: string, isTest: boolean = false) {
         this.name = name;
-        this.isTest = isTest;
     }
 
-    // expose the emitter for testing only, this.isTest is a hack
-    public getEmitter() {
-        if (this.isTest) {
-            return this.emitter;
-        }
-        return null;
-    }
+
 
 
     enqueue(payload: any): void {
         const message = { id: this.nextId++, payload };
         this.messages.push(message);
-        this.emitter.emit('new_message'); // todo: change to enum
+        this.processQueue();
     }
 
     async dequeue(timeout: number): Promise<any> {
@@ -40,18 +32,20 @@ class Queue {
 
         return new Promise((resolve, reject): void => {
             const timer: NodeJS.Timeout = setTimeout(() => {
-                this.emitter.removeListener('new_message', listener);
+                this.waiting = this.waiting.filter(request => request.resolve !== resolve)
                 resolve(null);
             }, timeout);
 
-            const listener = () => {
-                clearTimeout(timer);
-                this.emitter.removeListener('new_message', listener);
-                const result = this.messages.shift();
-                resolve(result?.payload);
-            };
-            this.emitter.once('new_message', listener);
+            this.waiting.push({ resolve, timer });
         });
+    }
+
+    private processQueue() {
+        while (this.messages.length > 0 && this.waiting.length > 0) {
+            const { resolve, timer } = this.waiting.shift()!;
+            clearTimeout(timer);
+            resolve(this.messages.shift()!.payload)
+        }
     }
 }
 
