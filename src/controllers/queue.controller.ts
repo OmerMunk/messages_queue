@@ -22,8 +22,8 @@ export const getMessageController = async (req: Request, res: Response) => {
     try {
         // console.log('in message controller')
         const queueName = req.params.queue_name
-        // console.log('queueName', queueName)
-        const message = await getMessageFromQueue(queueName, 1000);
+        const timeout = parseInt(req.query.timeout as string, 10) || 1000 //todo: convert to default variavble
+        const message = await getMessageFromQueue(queueName, timeout);
         // console.log(`message: ${message}`)
         if (message) {
             res.status(200).json({

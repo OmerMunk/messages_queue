@@ -35,7 +35,7 @@ class Queue {
 
     async dequeue(timeout: number): Promise<any> {
         console.log(`Dequeue called on queue: ${this.name}, current messages: ${JSON.stringify(this.messages)}`);
-        // console.log(`inside dequeue with timeout: ${timeout}`)
+        console.log(`inside dequeue with timeout: ${timeout}`)
         // console.log(`name is ${this.name}`)
         // console.log(`this.messages is ${JSON.stringify(this.messages)}`)
         if (this.messages.length > 0) {
