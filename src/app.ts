@@ -7,6 +7,11 @@ import {indexRouter} from "./routes/index.router";
 
 
 const app: Application = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(helmet())
+app.use(cookieParser())
+app.use(cors())
 
 
 
