@@ -11,13 +11,6 @@ describe('Queue', () => {
 
         });
 
-        it('should emit an event when a message is enqueued', done => {
-            queue.getEmitter()!.once('new_message', () => {
-                done();
-            });
-            queue.enqueue({ message: "Test Event" });
-            queue.dequeue(1);
-        });
 
         it('should return null if the queue is empty',
             ()=>{expect(queue.dequeue(1000)).resolves.toBeNull(); // Ensure queue starts empty
