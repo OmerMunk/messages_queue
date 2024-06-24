@@ -4,7 +4,7 @@ describe('Queue', () => {
 
 
     describe('enqueue', () => {
-        const queue = new Queue("testQueue1", true);
+        const queue = new Queue("testQueue1");
         it('should add a message to the queue', () => {
             queue.enqueue({ message: "Hello, world!" });
             expect(queue.dequeue(1000)).resolves.toEqual({ message: "Hello, world!" });
@@ -20,7 +20,7 @@ describe('Queue', () => {
 
 
     describe('dequeue', () => {
-        const queue = new Queue("testQueue2", true);
+        const queue = new Queue("testQueue2");
 
         it('should return null after the timeout if no message is enqueued', async () => {
             const result = await queue.dequeue(500);
