@@ -1,12 +1,11 @@
-import {Request, Response, NextFunction} from "express";
-import {addMessageToQueue, getMessageFromQueue} from "../service/queue.service";
+import { Request, Response } from "express";
+import { addMessageToQueue, getMessageFromQueue } from "../service/queue.service";
 
-export const addMessageController = async (req: Request, res: Response) => {
+export const addMessageController = async (req: Request, res: Response): Promise<void> => {
     try {
-        const queueName = req.params.queue_name
+        const queueName: string = req.params.queue_name
         const message = req.body;
-        // console.log(`controller sending message: ${JSON.stringify(message)}`)
-        const result = await addMessageToQueue(queueName, message);
+        const result: boolean = await addMessageToQueue(queueName, message);
         if (result) {
             res.status(201).json({
                 success: true,
@@ -14,17 +13,21 @@ export const addMessageController = async (req: Request, res: Response) => {
             })
         }
     } catch (error: any) {
-        // todo: add error logic
+        console.error(`[addMessageController] Error: ${error.message}`, error.stack)
+        // todo: later on: add a general express error middleware
+        console.error(`[addMessageController] Error: ${error.message}`, error.stack)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        })
     }
 }
 
-export const getMessageController = async (req: Request, res: Response) => {
+export const getMessageController = async (req: Request, res: Response): Promise<void> => {
     try {
-        // console.log('in message controller')
-        const queueName = req.params.queue_name
-        const timeout = parseInt(req.query.timeout as string, 10) || 1000 //todo: convert to default variavble
+        const queueName: string = req.params.queue_name
+        const timeout: number = parseInt(req.query.timeout as string, 10) || 1000 //todo: convert to default variavble
         const message = await getMessageFromQueue(queueName, timeout);
-        // console.log(`message: ${message}`)
         if (message) {
             res.status(200).json({
                 success: true,
@@ -37,6 +40,12 @@ export const getMessageController = async (req: Request, res: Response) => {
             })
         }
     } catch (error: any) {
-        // todo: add error logic
+        console.error(`[getMessageController] Error: ${error.message}`, error.stack)
+        // todo: later on: add a general express error middleware
+        console.error(`[addMessageController] Error: ${error.message}`, error.stack)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        })
     }
 }
