@@ -9,6 +9,11 @@ class Queue {
     private messages: Message[] = [];
     private emitter = new EventEmitter();
     private nextId = 1;
+    private name;
+
+    constructor(name: string) {
+        this.name = name;
+    }
 
     enqueue(payload: any): void {
         const message = { id: this.nextId++, payload };
