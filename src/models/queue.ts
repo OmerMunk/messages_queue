@@ -1,4 +1,4 @@
-import {IMessage} from "../interfaces/message";
+import {IMessage} from "../interfaces/message.interface";
 
 
 class Queue {
@@ -15,7 +15,7 @@ class Queue {
 
 
     enqueue(payload: any): void {
-        const message = { id: this.nextId++, payload };
+        const message: IMessage = { id: this.nextId++, payload };
         this.messages.push(message);
         this.processQueue();
     }
