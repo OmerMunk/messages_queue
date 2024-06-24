@@ -1,17 +1,13 @@
-// import { EventEmitter } from 'events';
+import {IMessage} from "../interfaces/message";
 
-interface Message {
-    id: number;
-    payload: any;
-}
 
 class Queue {
-    private messages: Message[] = [];
-    private nextId = 1;
-    public name;
+    private messages: IMessage[] = [];
+    private nextId: number = 1;
+    public name: string;
     private waiting: { resolve: Function, timer: NodeJS.Timeout }[] = []
 
-    constructor(name: string, isTest: boolean = false) {
+    constructor(name: string) {
         this.name = name;
     }
 
@@ -40,7 +36,7 @@ class Queue {
         });
     }
 
-    private processQueue() {
+    private processQueue(): void {
         while (this.messages.length > 0 && this.waiting.length > 0) {
             const { resolve, timer } = this.waiting.shift()!;
             clearTimeout(timer);
